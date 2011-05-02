@@ -1,6 +1,6 @@
 Name:                timecalc
 Version:             0.1.1
-Description:         A calculator for running splits and times.
+Synopsis:            A calculator for running splits and times.
 License:             MIT
 License-file:        LICENSE
 Category:            Console
