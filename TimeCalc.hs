@@ -1,4 +1,4 @@
-module TimeCalc where
+module Main where
 
 import Text.ParserCombinators.UU
 import Text.ParserCombinators.UU.Utils
@@ -26,9 +26,9 @@ interactive = runInputT defaultSettings loop
                                 loop
 
 
-run :: Show t =>  Parser t -> String -> String
+run :: Parser String -> String -> String
 run p inp = do  let (a, errors) =  parse ( (,) <$> p <*> pEnd) (createStr (LineColPos 0 0 0) inp)
-                if null errors then  show a
+                if null errors then  a
                                else  "Error in expression"
 
 timeExpr :: Parser String
@@ -46,15 +46,15 @@ expr :: Parser Double
 expr = foldr pChainl ( pDouble <|> pTime <|>pParens expr) (map same_prio operators) 
  where
   operators       = [[('+', (+)), ('-', (-))],  [('*' , (*))], [('/' , (/))]]
-  same_prio  ops  = foldr (<|>) empty [ op <$ pSym c | (c, op) <- ops]
+  same_prio  ops  = foldr (<|>) empty [ op <$ lexeme (pSym c) | (c, op) <- ops]
 
 pTime :: Parser Double
-pTime = pMinuteTime <|> pHourTime
+pTime = lexeme pRawMinuteTime <|> lexeme pRawHourTime
 
-pMinuteTime :: Parser Double
-pMinuteTime = makeTime <$> pIntegerRaw <* pSym ':' <*> pIntegerRaw <?> "min:sec"
+pRawMinuteTime :: Parser Double
+pRawMinuteTime = makeTime <$> pIntegerRaw <* pSym ':' <*> pIntegerRaw <?> "min:sec"
  where makeTime x y = x + (y / 60.0)
 
-pHourTime :: Parser Double
-pHourTime = makeTime <$> pIntegerRaw <* pSym ':' <*> pIntegerRaw <* pSym ':' <*> pIntegerRaw <?> "min:sec"
+pRawHourTime :: Parser Double
+pRawHourTime = makeTime <$> pIntegerRaw <* pSym ':' <*> pIntegerRaw <* pSym ':' <*> pIntegerRaw <?> "hour:min:sec"
  where makeTime x y z = x * 60 + y + z / 60.0

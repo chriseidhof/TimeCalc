@@ -1,0 +1,12 @@
+Name:                timecalc
+Version:             0.1
+Description:         A calculator for running times
+License:             MIT
+License-file:        LICENSE
+Author:              Chris Eidhof
+Maintainer:          chris+hackage@eidhof.nl
+Build-Type:          Simple
+Cabal-Version:       >=1.2
+Executable timecalc
+  Main-is:           TimeCalc.hs
+  Build-Depends:     base >= 3 && < 5, haskeline >= 0.6, uu-parsinglib >= 2.7
